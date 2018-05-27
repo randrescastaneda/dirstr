@@ -25,8 +25,8 @@ UPIs(string)         ///
 ]
 
 
+noi gtsd check dirstr
 *--------------- Conditions and initial parameter
-
 if ("`projects'" == "" & "`ados'" == "" & "`upis'" == "") {
 	noi disp as err "you must specify either project() or ados()"
 	error

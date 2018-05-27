@@ -94,3 +94,22 @@ qui {
 end
 
 exit 
+
+/* End of do-file */
+
+><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
+
+local pkg test
+local path "//wbgfscifs01/gtsd/01.personal/wb384996/`pkg'"
+
+shell git init "`path'"                       /* 
+ */ & git clone --bare -l "`path'" "`path'.git"     
+ 
+  
+*/ & git remote rm shared /*
+*/ & git remote add shared "`path'.git" & pause
+*/ & git commit -m 'initial commit' "`path'/readme.txt" /*
+*/ & copy NUL "`path'/readme.txt" /*
+*/ & git add . "`path'" & pause /*
+
+
