@@ -288,9 +288,6 @@ exit
 adopath ++ "r:\02.core_team\01.programs\01.ado\dirstr\"
 adopath -  "r:\02.core_team\01.programs\01.ado\dirstr\"
 
-adopath ++ "c:\Users\wb384996\OneDrive - WBG\GTSD\02.core_team\01.programs\01.ado\dirstr\"
-adopath -  "c:\Users\wb384996\OneDrive - WBG\GTSD\02.core_team\01.programs\01.ado\dirstr\"
-
 
 dirstr, project(projections) nature(request) format(MY)
 dirstr, project(PEB) nature(corporate) vintage(AM18)

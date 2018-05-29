@@ -10,31 +10,17 @@ Creation Date:    29may2018
 ====================================================================*/
 
 program define dirstr_git
-syntax anything(name=pkg), [replace dir(string) pause ]
-
+syntax anything(name=pkg), [replace dir(string) ]
 
 local dir: subinstr local dir "\" "/", all
 local path "`dir'/`pkg'"
 
-if ("`pause'" == "pause") local pause "& pause"
 
 mata: st_local("direx", strofreal(direxists("`path'.git")))
 
 if ("`direx'" != "1"){
 	shell git init "`path'"                       /* 
-	*/ & git clone --bare -l "`path'" "`path'.git" /* 
-	*/ & attrib +s +h "`path'.git" `pause'
-}
-
-mata: st_local("direx", strofreal(direxists("`path'.git")))
-if ("`direx'" != "1"){
-	noi disp in err "folder `pkg'.git not created. use {cmd:pause} option to check for " ///
-	_n "problem in the cmd window."
-}
-else {
-	noi disp in y "folder `pkg'.git created successfully but not shown because it is " ///
-	_n `"super hidden. you may type {cmd:shell attrib -s -h "`path'.git"} "'  ///
-	_n "to unhide it"
+	*/ & git clone --bare -l "`path'" "`path'.git"
 }
 
 end 
