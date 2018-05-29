@@ -13,8 +13,9 @@ program define dirstr_git
 syntax anything(name=pkg), [replace dir(string) pause ]
 
 
-local dir: subinstr local dir "\" "/", all
-local path "`dir'/`pkg'"
+local dir:   subinstr local dir "\" "/", all
+local path   "`dir'/`pkg'"
+local path2: subinstr local dir "/" "\", all
 
 if ("`pause'" == "pause") local pause "& pause"
 
@@ -23,7 +24,7 @@ mata: st_local("direx", strofreal(direxists("`path'.git")))
 if ("`direx'" != "1"){
 	shell git init "`path'"                       /* 
 	*/ & git clone --bare -l "`path'" "`path'.git" /* 
-	*/ & attrib +s +h "`path'.git" `pause'
+	*/ & attrib +s +h "`path2'.git" `pause'
 }
 
 mata: st_local("direx", strofreal(direxists("`path'.git")))
