@@ -25,8 +25,8 @@ UPIs(string)         ///
 ]
 
 
+noi gtsd check dirstr
 *--------------- Conditions and initial parameter
-
 if ("`projects'" == "" & "`ados'" == "" & "`upis'" == "") {
 	noi disp as err "you must specify either project() or ados()"
 	error
@@ -129,6 +129,7 @@ if ("`ados'" != "") {
 		cap mkdir "`adofolder'\\`ado'"
 		cap mkdir "`adofolder'\\`ado'\_vintage"
 		dirstr_pkg `ado', dir("`adofolder'")
+		dirstr_git `ado', dir("`adofolder'")
 	} 
 }
 
@@ -284,7 +285,8 @@ exit
 
 ><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
 
-adopath ++ "z:\wb384996\Andres\temporal\GTSD\02.core_team\01.programs\01.ado\dirstr\"
+adopath ++ "r:\02.core_team\01.programs\01.ado\dirstr\"
+adopath -  "r:\02.core_team\01.programs\01.ado\dirstr\"
 
 
 dirstr, project(projections) nature(request) format(MY)
