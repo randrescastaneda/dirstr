@@ -58,7 +58,7 @@ qui {
 	tempfile toca
 	filefilter "`dir'/stata.toc" `toca', from("p `pkg'") to("ZZZZ")
 	local occurrences = r(occurrences)
-	if (`occurrences' > 0) {
+	if (`occurrences' == 0) {
 		
 		tempfile file1 file2 
 		tempname in out

@@ -15,7 +15,7 @@ syntax anything(name=pkg), [replace dir(string) pause ]
 
 local dir:   subinstr local dir "\" "/", all
 local path   "`dir'/`pkg'"
-local path2: subinstr local dir "/" "\", all
+local path2: subinstr local path "/" "\", all
 
 if ("`pause'" == "pause") local pause "& pause"
 
@@ -26,6 +26,7 @@ if ("`direx'" != "1"){
 	*/ & git clone --bare -l "`path'" "`path'.git" /* 
 	*/ & attrib +s +h "`path2'.git" `pause'
 }
+
 
 mata: st_local("direx", strofreal(direxists("`path'.git")))
 if ("`direx'" != "1"){
@@ -56,5 +57,17 @@ local path "//wbgfscifs01/gtsd/01.personal/wb384996/`pkg'"
 */ & git commit -m 'initial commit' "`path'/readme.txt" /*
 */ & copy NUL "`path'/readme.txt" /*
 */ & git add . "`path'" & pause /*
+
+
+
+
+local dir "\\wbgfscifs01\gtsd\02.core_team\01.programs\01.ado"
+
+local ados: dir "\\wbgfscifs01\gtsd\02.core_team\01.programs\01.ado\" dirs "*.git"
+
+foreach ado of local ados {
+	disp "`ado'"
+	shell attrib +s +h "`dir'\\`ado'" 
+}
 
 

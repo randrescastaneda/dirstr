@@ -22,6 +22,7 @@ rootname(string)     ///
 FORMATtime(string)   ///
 ADOs(string)         ///
 UPIs(string)         ///
+pause                ///
 ]
 
 
@@ -129,7 +130,7 @@ if ("`ados'" != "") {
 		cap mkdir "`adofolder'\\`ado'"
 		cap mkdir "`adofolder'\\`ado'\_vintage"
 		dirstr_pkg `ado', dir("`adofolder'")
-		dirstr_git `ado', dir("`adofolder'")
+		dirstr_git `ado', dir("`adofolder'") `pause'
 	} 
 }
 
@@ -285,8 +286,8 @@ exit
 
 ><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
 
-adopath ++ "r:\02.core_team\01.programs\01.ado\dirstr\"
-adopath -  "r:\02.core_team\01.programs\01.ado\dirstr\"
+adopath ++ "c:\Users\wb384996\OneDrive - WBG\GTSD\02.core_team\01.programs\01.ado\dirstr"
+adopath -  "c:\Users\wb384996\OneDrive - WBG\GTSD\02.core_team\01.programs\01.ado\dirstr"
 
 
 dirstr, project(projections) nature(request) format(MY)
