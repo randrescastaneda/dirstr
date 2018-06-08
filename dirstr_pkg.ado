@@ -11,14 +11,13 @@ Creation Date:    22may2018
 
 
 program define dirstr_pkg
-syntax anything(name=pkg), [replace dir(string) ]
+syntax anything(name=pkg), [replace dir(string) update]
 
 qui {
 	
 	/*====================================================================
 	1: create pkg file
 	====================================================================*/
-	
 	cap confirm file "`dir'/`pkg'.pkg"
 	if (_rc) {
 		tempfile fout
@@ -50,6 +49,57 @@ qui {
 	}
 	else {
 		noi disp in y "/`pkg'.pkg already exists"
+	}
+	
+	*=======================================================
+	*--------------- Update Pakage -------------------------
+	*=======================================================
+	
+	if ("`update'" == "update") {
+		* local dir "\\wbgfscifs01\GTSD\02.core_team\01.programs\01.ado"
+		* local pkg "indicators"
+		
+		local date: disp %td date("`c(current_date)'", "DMY")
+		local ados: dir "`dir'/`pkg'" files "*.ado"
+		local help: dir "`dir'/`pkg'" files "*.sthlp"
+		local files = `"`ados' `help'"' 
+		foreach file of local files {
+			disp "`file'"
+		}
+		
+		tempfile file1 file2 
+		tempname in out
+		
+		copy "`dir'/`pkg'.pkg" "`dir'/_aux/`pkg'_`datetime'.pkg", replace 
+		copy "`dir'/`pkg'.pkg" `file1', replace 
+		
+		file open `in' using `file1', read
+		file open `out' using `file2', write append	
+		
+		local newend = 0
+		file read `in' line
+		while (r(eof)==0 & `newend' != 1)  {	// write file
+			if regexm(`"`line'"', "^d Distribution") {
+				file write `out' `"d Distribution-Date: `date'"' _n
+				file read `in' line
+			}
+			else if regexm(`"`line'"', "^f ") {
+				foreach file of local files {
+					file write `out' `"f `pkg'/`file'"' _n
+				}
+				file write `out' `"e"' _n
+				local newend = 1
+			}
+			else {
+				file write `out' `"`line'"' _n
+				file read `in' line
+			}
+		} 	// end loop of write file
+		file close _all
+		
+		copy `file2' "`dir'/`pkg'.pkg", replace
+		noi disp in y "/`pkg'.pkg successfully updated"
+		exit
 	}
 	
 	/*====================================================================

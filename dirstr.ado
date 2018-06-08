@@ -23,17 +23,20 @@ FORMATtime(string)   ///
 ADOs(string)         ///
 UPIs(string)         ///
 pause                ///
+update               ///
 ]
 
 
 noi gtsd check dirstr
 *--------------- Conditions and initial parameter
+if ("`update'" != "" & "`ados'" == "") local ados "allados"
+
 if ("`projects'" == "" & "`ados'" == "" & "`upis'" == "") {
-	noi disp as err "you must specify either project() or ados()"
+	noi disp as err "you must specify either projects() or ados()"
 	error
 }
 
-if ("`project'" != "" & "`nature'" == "") {
+if ("`projects'" != "" & "`nature'" == "") {
 	noi disp as err "you must specify nature() if you want to create a new project"
 	error
 }
@@ -47,6 +50,12 @@ if ("`nature'" == "corporate" & "`vintage'" == "") {
 	noi disp as err "you must specify vintage() if nature(corporate)"
 	error 
 }
+
+if ("`update'" != "" & "`projects'" != "") {
+	noi disp in r "Option update only works with option ados()"
+	error
+}
+
 
 if      ("`nature'" == "corporate")  {
 	local suf "_corp" 
@@ -89,7 +98,7 @@ local upis = lower("`upis'")
 * 0. Root level
 cap mkdir "`maindir'"
 
-   
+
 
 *****************************************
 * 1. First level
@@ -112,7 +121,7 @@ cap mkdir "`maindir'\01.personal\_handover"
 foreach upi of local upis {
 	if !regexm("`upi'", "^wb") {
 		noi disp as err "Each upi must start with wb " in y "(e.g., `c(username)')"
-		}
+	}
 	cap mkdir "`maindir'\01.personal\\`upi'"
 }
 
@@ -126,11 +135,22 @@ cap mkdir "`adofolder'"
 cap mkdir "`adofolder'\_aux"
 
 if ("`ados'" != "") {
+	
+	if ("`ados'" == "allados") {
+		local allpkgs: dir "`adofolder'" files "*.pkg"
+		local ados: subinstr local allpkgs ".pkg" "", all
+	}
+	
 	foreach ado of local ados {
 		cap mkdir "`adofolder'\\`ado'"
 		cap mkdir "`adofolder'\\`ado'\_vintage"
-		dirstr_pkg `ado', dir("`adofolder'")
-		dirstr_git `ado', dir("`adofolder'") `pause'
+		
+		dirstr_pkg `ado', dir("`adofolder'") `update'
+		
+		if ("`update'" == "") {
+			dirstr_git `ado', dir("`adofolder'") `pause'
+		}
+		
 	} 
 }
 
@@ -213,94 +233,95 @@ if ("`projects'" != "") {
 		if (inlist("`nature'", "corporate", "request")) {
 			local vintfolder "`projfolder'\\`founddir'_`vintage'"
 			cap mkdir "`vintfolder'"
-			
-			local qafolder "`vintfolder'\\`founddir'_`vintage'_QA"
-			
-			cap mkdir "`qafolder'"
-			
-			cap mkdir "`qafolder'\_old"
-			cap mkdir "`qafolder'\_temp"
-			cap mkdir "`qafolder'\_aux"
-			cap mkdir "`qafolder'\01.programs"
-			cap mkdir "`qafolder'\01.programs\01.ado"
-			cap mkdir "`qafolder'\01.programs\02.dofile"
-			cap mkdir "`qafolder'\01.programs\03.R"
-			cap mkdir "`qafolder'\01.programs\04.Python"
-			cap mkdir "`qafolder'\01.programs\05.VB"	
-			cap mkdir "`qafolder'\02.input"	
-			cap mkdir "`qafolder'\03.output"
-			cap mkdir "`qafolder'\03.output\01.data"
-			cap mkdir "`qafolder'\03.output\02.dashboard"
-			cap mkdir "`qafolder'\03.output\03.presentations"
-			cap mkdir "`qafolder'\03.output\04.writeups"	
-			cap mkdir "`qafolder'\04.references"
-			cap mkdir "`qafolder'\05.tools"	
-			
-			cap mkdir "`vintfolder'\\`founddir'_`vintage'_Production"	
+		
+		local qafolder "`vintfolder'\\`founddir'_`vintage'_QA"
+		
+		cap mkdir "`qafolder'"
+		
+		cap mkdir "`qafolder'\_old"
+		cap mkdir "`qafolder'\_temp"
+		cap mkdir "`qafolder'\_aux"
+		cap mkdir "`qafolder'\01.programs"
+		cap mkdir "`qafolder'\01.programs\01.ado"
+		cap mkdir "`qafolder'\01.programs\02.dofile"
+		cap mkdir "`qafolder'\01.programs\03.R"
+		cap mkdir "`qafolder'\01.programs\04.Python"
+		cap mkdir "`qafolder'\01.programs\05.VB"	
+		cap mkdir "`qafolder'\02.input"	
+		cap mkdir "`qafolder'\03.output"
+		cap mkdir "`qafolder'\03.output\01.data"
+		cap mkdir "`qafolder'\03.output\02.dashboard"
+		cap mkdir "`qafolder'\03.output\03.presentations"
+		cap mkdir "`qafolder'\03.output\04.writeups"	
+		cap mkdir "`qafolder'\04.references"
+		cap mkdir "`qafolder'\05.tools"	
+		
+		cap mkdir "`vintfolder'\\`founddir'_`vintage'_Production"	
 		}  // end of Corporate or request projects
 		
 		*-------- Continuous nature
 		if ("`nature'" == "continuous") {	
-			cap mkdir "`projfolder'\\`founddir'_QA"
-			cap mkdir "`projfolder'\\`founddir'_QA\_old"
-			cap mkdir "`projfolder'\\`founddir'_QA\_temp"
-			cap mkdir "`projfolder'\\`founddir'_QA\_aux"
-			
-			cap mkdir "`projfolder'\\`founddir'_QA\01.programs"
-			cap mkdir "`projfolder'\\`founddir'_QA\01.programs\01.ado"
-			cap mkdir "`projfolder'\\`founddir'_QA\01.programs\02.dofile"
-			cap mkdir "`projfolder'\\`founddir'_QA\01.programs\03.R"
-			cap mkdir "`projfolder'\\`founddir'_QA\01.programs\04.Python"
-			cap mkdir "`projfolder'\\`founddir'_QA\01.programs\05.VB"
-			
-			cap mkdir "`projfolder'\\`founddir'_QA\02.input"
-			
-			cap mkdir "`projfolder'\\`founddir'_QA\03.output"
-			cap mkdir "`projfolder'\\`founddir'_QA\03.output\01.data"
-			cap mkdir "`projfolder'\\`founddir'_QA\03.output\02.dashboard"
-			cap mkdir "`projfolder'\\`founddir'_QA\03.output\03.PPT"
-			cap mkdir "`projfolder'\\`founddir'_QA\03.output\04.writeups"
-			
-			cap mkdir "`projfolder'\\`founddir'_QA\04.references"
-			cap mkdir "`projfolder'\\`founddir'_QA\05.tools"
-			
-			cap mkdir "`projfolder'\\`founddir'_Production"
-			
-			cap mkdir "`projfolder'\\`founddir'_Production\\`founddir'_`vintage'"	
-			
+		cap mkdir "`projfolder'\\`founddir'_QA"
+		cap mkdir "`projfolder'\\`founddir'_QA\_old"
+		cap mkdir "`projfolder'\\`founddir'_QA\_temp"
+		cap mkdir "`projfolder'\\`founddir'_QA\_aux"
+		
+		cap mkdir "`projfolder'\\`founddir'_QA\01.programs"
+		cap mkdir "`projfolder'\\`founddir'_QA\01.programs\01.ado"
+		cap mkdir "`projfolder'\\`founddir'_QA\01.programs\02.dofile"
+		cap mkdir "`projfolder'\\`founddir'_QA\01.programs\03.R"
+		cap mkdir "`projfolder'\\`founddir'_QA\01.programs\04.Python"
+		cap mkdir "`projfolder'\\`founddir'_QA\01.programs\05.VB"
+		
+		cap mkdir "`projfolder'\\`founddir'_QA\02.input"
+		
+		cap mkdir "`projfolder'\\`founddir'_QA\03.output"
+		cap mkdir "`projfolder'\\`founddir'_QA\03.output\01.data"
+		cap mkdir "`projfolder'\\`founddir'_QA\03.output\02.dashboard"
+		cap mkdir "`projfolder'\\`founddir'_QA\03.output\03.PPT"
+		cap mkdir "`projfolder'\\`founddir'_QA\03.output\04.writeups"
+		
+		cap mkdir "`projfolder'\\`founddir'_QA\04.references"
+		cap mkdir "`projfolder'\\`founddir'_QA\05.tools"
+		
+		cap mkdir "`projfolder'\\`founddir'_Production"
+		
+		cap mkdir "`projfolder'\\`founddir'_Production\\`founddir'_`vintage'"	
+		
 		} // end of continuous projects. 
-	} // end projects loop
-} // end projects != ""
-
-
-
-
-
-end 
-
-
-
-
-exit
-/* End of do-file */
-
-><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
-
-adopath ++ "c:\Users\wb384996\OneDrive - WBG\GTSD\02.core_team\01.programs\01.ado\dirstr"
-adopath -  "c:\Users\wb384996\OneDrive - WBG\GTSD\02.core_team\01.programs\01.ado\dirstr"
-
-
-dirstr, project(projections) nature(request) format(MY)
-dirstr, project(PEB) nature(corporate) vintage(AM18)
-dirstr, project(MPO) nature(corporate) vintage(AM18)
-dirstr, project(PEB MPO) nature(corporate) vintage(AM18)
-
-dirstr, project(datalibweb) nature(continuous)
-dirstr, project(PRIMUS) nature(continuous)
-dirstr, ados(datalibweb groupfunction lineup peb qcheck indicators)
-dirstr, ados(lineup peb)
-dirstr, ados(gtsd)
-dirstr, ados(dirstr)
-dirstr, upis(wb255520 wb327173 wb252482 wb378870 wb175777 wb384996 wb236343 wb502818)
-
-"z:\wb384996\Andres\temporal" "GTSD_1"
+		} // end projects loop
+		} // end projects != ""
+		
+		
+		
+		
+		
+		end 
+		
+		
+		
+		
+		exit
+		/* End of do-file */
+		
+		><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
+		
+		adopath ++ "c:\Users\wb384996\OneDrive - WBG\GTSD\02.core_team\01.programs\01.ado\dirstr"
+		adopath -  "c:\Users\wb384996\OneDrive - WBG\GTSD\02.core_team\01.programs\01.ado\dirstr"
+		
+		
+		dirstr, project(projections) nature(request) format(MY)
+		dirstr, project(PEB) nature(corporate) vintage(AM18)
+		dirstr, project(MPO) nature(corporate) vintage(AM18)
+		dirstr, project(PEB MPO) nature(corporate) vintage(AM18)
+		
+		dirstr, project(datalibweb) nature(continuous)
+		dirstr, project(PRIMUS) nature(continuous)
+		dirstr, ados(datalibweb groupfunction lineup peb qcheck indicators)
+		dirstr, ados(lineup peb)
+		dirstr, ados(gtsd)
+		dirstr, ados(dirstr)
+		dirstr, upis(wb255520 wb327173 wb252482 wb378870 wb175777 wb384996 wb236343 wb502818)
+		
+		"z:\wb384996\Andres\temporal" "GTSD_1"
+				
