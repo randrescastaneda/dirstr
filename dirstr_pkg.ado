@@ -52,7 +52,7 @@ qui {
 	}
 	
 	*=======================================================
-	*--------------- Update Pakage -------------------------
+	*--------------- Update Package -------------------------
 	*=======================================================
 	
 	if ("`update'" == "update") {
@@ -66,6 +66,22 @@ qui {
 		foreach file of local files {
 			disp "`file'"
 		}
+		
+		* Within the subfolders
+		local subfs: dir "`dir'/`pkg'" dirs "*"
+		foreach subf of local subfs {
+			local ados: dir "`dir'/`pkg'/`subf'" files "*.ado"
+			local help: dir "`dir'/`pkg'/`subf'" files "*.sthlp"
+			
+			foreach ado of local ados {
+				local files = `"`files' `subf'/`ado'"' 
+			}
+			
+			foreach h of local help {
+				local files = `"`files' `subf'/`h'"' 
+			}
+		}  // end of subfolders loop
+		
 		
 		tempfile file1 file2 
 		tempname in out
@@ -114,29 +130,29 @@ qui {
 		tempname in out
 		
 		
-		copy "`dir'/stata.toc" "`dir'/_aux/stata_`datetime'.toc", replace 
-		copy "`dir'/stata.toc" `file1', replace 
-		
-		file open `in' using `file1', read
-		file open `out' using `file2', write append	
-		
+	copy "`dir'/stata.toc" "`dir'/_aux/stata_`datetime'.toc", replace 
+	copy "`dir'/stata.toc" `file1', replace 
+	
+	file open `in' using `file1', read
+	file open `out' using `file2', write append	
+	
+	file read `in' line
+	file write `out' `"*! v 2           <`date'>"' _n // first line
+	
+	
+	file read `in' line
+	while r(eof)==0  {	// write file
+		if regexm(`"`line'"', "^\*next") {
+			file write `out' `"p `pkg'	(Ado)		<description of `pkg'>"' _n
+		}
+		file write `out' `"`line'"' _n
 		file read `in' line
-		file write `out' `"*! v 2           <`date'>"' _n // first line
-		
-		
-		file read `in' line
-		while r(eof)==0  {	// write file
-			if regexm(`"`line'"', "^\*next") {
-				file write `out' `"p `pkg'	(Ado)		<description of `pkg'>"' _n
-			}
-			file write `out' `"`line'"' _n
-			file read `in' line
-		} 	// end loop of write file
-		file close _all
-		
-		copy `file2' "`dir'/stata.toc", replace
-		
-		noi disp in y "/stata.toc successfully updated"
+	} 	// end loop of write file
+	file close _all
+	
+	copy `file2' "`dir'/stata.toc", replace
+	
+	noi disp in y "/stata.toc successfully updated"
 	}
 	else {	
 		noi disp in y "/stata.toc already includes a p `pkg' line"

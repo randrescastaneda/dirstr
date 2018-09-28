@@ -275,13 +275,15 @@ created folder structure in the directory path specified above within the folder
 
 {title:Acknowledgements}
 
-    {p 4 4 2}This program was developed by the {browse "" : Global Team for Statistical Development}, 
-		from the Poverty Global Practice in the World Bank.{p_end} 
-    {p 4 4 2}Comments and suggestions are most welcomed.{p_end} 
+{p 4 4 2}This program was developed by the {browse "" : Global Team for 
+Statistical Development}, 
+from the Poverty Global Practice in the World Bank.{p_end} 
+{p 4 4 2}Comments and suggestions are most welcomed.{p_end} 
 	
 {title:Authors}
 
-    {p 4 4 2}Frodo Baggins{p_end}
+{p 4 4 4}R.Andres Castaneda, The World Bank{p_end}
+{p 6 6 4}Email {browse "acastanedaa@worldbank.org":acastanedaa@worldbank.org}{p_end}
 
 {title:Also see other Stata program from the Global Team from Statistical Development}
 
