@@ -51,7 +51,7 @@ qui {
 		noi disp in y "/`pkg'.pkg already exists"
 	}
 	
-	* This is a test
+	* This is the second part of the test
 	*=======================================================
 	*--------------- Update Package -------------------------
 	*=======================================================
