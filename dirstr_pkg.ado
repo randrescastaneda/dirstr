@@ -82,7 +82,6 @@ qui {
 			}
 		}  // end of subfolders loop
 		
-		
 		tempfile file1 file2 
 		tempname in out
 		
