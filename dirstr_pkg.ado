@@ -15,37 +15,17 @@ syntax anything(name=pkg), [replace dir(string) update]
 
 qui {
 	
+	local date: disp %td date("`c(current_date)'", "DMY")
+	local datetime: disp %tcDDmonthCCYY-HHMMSS clock("`c(current_date)'`c(current_time)'", "DMYhms")
+	local datetime = trim("`datetime'")
+	
+	
 	/*====================================================================
 	1: create pkg file
 	====================================================================*/
 	cap confirm file "`dir'/`pkg'.pkg"
 	if (_rc) {
-		tempfile fout
-		tempname f
-		local date: disp %td date("`c(current_date)'", "DMY")
-		local datetime: disp %tcDDmonthCCYY-HHMMSS clock("`c(current_date)'`c(current_time)'", "DMYhms")
-		local datetime = trim("`datetime'")
-		
-		file open `f' using `fout', write append
-		file write `f' `"v 3"' _n
-		file write `f' `""' _n
-		file write `f' `"d HERE GOES THE SHORT DESCRIPTION"' _n
-		file write `f' `"d "' _n
-		file write `f' `"d {p 4 4 2} {cmd:`pkg'} <replace with long description>.{p_end}"' _n
-		file write `f' `"d"' _n
-		file write `f' `"d {p 4 4 2} {ul:Contributing authors:} <Include your name and collaborators> {p_end}"' _n
-		file write `f' `"d"' _n
-		file write `f' `"d Distribution-Date: `date'"' _n
-		file write `f' `"  "' _n
-		file write `f' `"f `pkg'/`pkg'.ado       "' _n
-		file write `f' `"f `pkg'/`pkg'.sthlp       "' _n
-		file write `f' `"e"' _n
-		
-		file close _all
-		
-		
-		copy `fout' "`dir'/`pkg'.pkg", `replace'
-		noi disp in y "/`pkg'.pkg created successfully."
+		noi dirstr_pkg_template pkg, dir(`dir') pkg(`pkg')
 	}
 	else {
 		noi disp in y "/`pkg'.pkg already exists"
@@ -120,6 +100,12 @@ qui {
 	/*====================================================================
 	2: Update stata.toc file
 	====================================================================*/
+	cap confirm file "`dir'/stata.toc"
+	if (_rc) {
+		dirstr_pkg_template toc, dir(`dir')
+	}  // if stata.toc does not exist
+	
+	
 	tempfile toca
 	filefilter "`dir'/stata.toc" `toca', from("p `pkg'") to("ZZZZ")
 	local occurrences = r(occurrences)
@@ -164,8 +150,10 @@ qui {
 	
 	cap confirm file "`dir'/`pkg'/`pkg'.sthlp" 
 	if (_rc) {
-		filefilter "`dir'/_aux/sthlp_template.sthlp" "`dir'/`pkg'/`pkg'.sthlp", ///
-		from("sthlp_template") to("`pkg'") `replace'
+		* filefilter "`dir'/_aux/sthlp_template.sthlp" "`dir'/`pkg'/`pkg'.sthlp", ///
+		* from("sthlp_template") to("`pkg'") `replace'
+		
+		dirstr_pkg_template sthlp, dir(`dir') pkg(`pkg')
 	}
 	
 	
