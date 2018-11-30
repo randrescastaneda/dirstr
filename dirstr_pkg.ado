@@ -94,7 +94,7 @@ qui {
 		
 		copy `file2' "`dir'/`pkg'.pkg", replace
 		noi disp in y "/`pkg'.pkg successfully updated"
-		exit
+		
 	}
 	
 	/*====================================================================

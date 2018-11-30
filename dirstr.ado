@@ -24,6 +24,7 @@ ADOs(string)         ///
 UPIs(string)         ///
 pause                ///
 update               ///
+d4g                  ///
 ]
 
 
@@ -85,6 +86,10 @@ if ("`vintage'" == "") {
 
 if ("`rootname'" == "") local rootname "GTSD"
 
+if ("`d4g'" == "d4g") {
+	local maindir "\\ecaweb00\web\povdata\gtsd"
+	local update "update"
+}
 
 if ("`maindir'" == "") {
 	local maindir "\\wbgfscifs01\\`rootname'"
