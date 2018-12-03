@@ -52,16 +52,6 @@ qui {
 		foreach subf of local subfs {
 			
 			if regexm("`subf'", "\.git|^_") continue 
-			* local ados: dir "`dir'/`pkg'/`subf'" files "*.ado"
-			* local help: dir "`dir'/`pkg'/`subf'" files "*.sthlp"
-			
-			* foreach ado of local ados {
-				* local files = `"`files' `subf'/`ado'"' 
-			* }
-			
-			* foreach h of local help {
-				* local files = `"`files' `subf'/`h'"' 
-			* }
 			
 			local allfiles: dir "`dir'/`pkg'/`subf'" files "*"
 			
