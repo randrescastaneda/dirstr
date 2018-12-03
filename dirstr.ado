@@ -14,7 +14,7 @@ program define dirstr
 
 syntax,              /// 
 [                    ///
-PROJects(string)      ///
+PROJects(string)     ///
 NATure(string)       ///
 VINTage(string)      ///
 MAINdir(string)      ///
