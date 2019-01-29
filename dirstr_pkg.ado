@@ -50,16 +50,15 @@ qui {
 		* Within the subfolders
 		local subfs: dir "`dir'/`pkg'" dirs "*"
 		foreach subf of local subfs {
-			local ados: dir "`dir'/`pkg'/`subf'" files "*.ado"
-			local help: dir "`dir'/`pkg'/`subf'" files "*.sthlp"
 			
-			foreach ado of local ados {
-				local files = `"`files' `subf'/`ado'"' 
+			if regexm("`subf'", "\.git|^_") continue 
+			
+			local allfiles: dir "`dir'/`pkg'/`subf'" files "*"
+			
+			foreach file of local allfiles {
+				local files = `"`files' "`subf'/`file'" "'
 			}
 			
-			foreach h of local help {
-				local files = `"`files' `subf'/`h'"' 
-			}
 		}  // end of subfolders loop
 		
 		tempfile file1 file2 
@@ -94,7 +93,7 @@ qui {
 		
 		copy `file2' "`dir'/`pkg'.pkg", replace
 		noi disp in y "/`pkg'.pkg successfully updated"
-		exit
+		
 	}
 	
 	/*====================================================================
